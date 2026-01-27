@@ -1,0 +1,96 @@
+{
+  "template_id": "low_risk_template",
+  "version": "1.0",
+  "sections": [
+    {
+      "name": "Access Control",
+      "questions": [
+        {"id": "AC_01", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "AC_02", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "AC_03", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "AC_04", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "AC_05", "answer": "Monitoring enabled", "mandatory": false, "requires_evidence": false, "type": "multiple_choice", "evidence_uploaded": false},
+        {"id": "AC_06", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "AC_07", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "AC_08", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "AC_09", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    },
+    {
+      "name": "Data Protection",
+      "questions": [
+        {"id": "DP_01", "answer": "AES-256 Encryption", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "DP_02", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "DP_03", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "DP_04", "answer": "Formal procedures in place", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "DP_05", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "DP_06", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "DP_07", "answer": "No", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "DP_08", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    },
+    {
+      "name": "Incident Response",
+      "questions": [
+        {"id": "IR_01", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "IR_02", "answer": "Reporting process documented", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "IR_03", "answer": "Notification process documented", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "IR_04", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "IR_05", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "IR_06", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true}
+      ]
+    },
+    {
+      "name": "Vulnerability Management",
+      "questions": [
+        {"id": "VM_01", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "VM_02", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "VM_03", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "VM_04", "answer": "Tools used", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "VM_05", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "VM_06", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    },
+    {
+      "name": "BCP/DR",
+      "questions": [
+        {"id": "BCP_01", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "BCP_02", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "BCP_03", "answer": "Regular testing", "mandatory": false, "requires_evidence": false, "type": "text", "evidence_uploaded": false},
+        {"id": "BCP_04", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "BCP_05", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "BCP_06", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    },
+    {
+      "name": "Compliance",
+      "questions": [
+        {"id": "COMP_01", "answer": "Compliant", "mandatory": true, "requires_evidence": true, "type": "text", "evidence_uploaded": true},
+        {"id": "COMP_02", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "COMP_03", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "COMP_04", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "COMP_05", "answer": "No", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    },
+    {
+      "name": "Operations",
+      "questions": [
+        {"id": "OPS_01", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "OPS_02", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "OPS_03", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "OPS_04", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "OPS_05", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    },
+    {
+      "name": "Sub-processors",
+      "questions": [
+        {"id": "SUB_01", "answer": "No", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "SUB_02", "answer": "Yes", "mandatory": true, "requires_evidence": true, "type": "choice", "evidence_uploaded": true},
+        {"id": "SUB_03", "answer": "No", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "SUB_04", "answer": "No", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false},
+        {"id": "SUB_05", "answer": "Yes", "mandatory": false, "requires_evidence": false, "type": "choice", "evidence_uploaded": false}
+      ]
+    }
+  ]
+}

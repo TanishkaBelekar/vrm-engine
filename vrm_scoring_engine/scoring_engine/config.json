@@ -1,0 +1,60 @@
+{
+  "version": "v1",
+
+  "section_weights": {
+    "Access Control": 20,
+    "Data Protection": 15,
+    "Incident Response": 10,
+    "Vulnerability Management": 10,
+    "BCP/DR": 10,
+    "Compliance": 10,
+    "Operations": 15,
+    "Sub-processors": 10
+  },
+
+  "red_flag_rules": {
+    "AC_02": ["No"],
+    "AC_03": ["No"],
+    "DP_07": ["Yes"],
+    "IR_01": ["No"],
+    "IR_06": ["No"],
+    "VM_01": ["No", "Partial"],
+    "VM_02": ["No"],
+    "COMP_05": ["Yes"],
+    "SUB_05": ["No"]
+  },
+
+
+  "answer_scores": {
+  "Yes": 0,
+  "Partial": 1,
+  "No": 2,
+  "Real time monitoring": 0,
+  "Periodic logs only": 1,
+  "No monitoring": 2
+},
+
+
+  "mandatory_evidence_rules": {
+    "AC_02": ["policy_document"],
+    "AC_04": ["access_review_logs"],
+    "DP_06": ["data_classification_policy"],
+    "IR_01": ["incident_response_plan"],
+    "IR_04": ["incident_response_simulation_evidence"],
+    "IR_06": ["incident_response_training_records"],
+    "VM_03": ["vulnerability_scan_report"],
+    "VM_05": ["vulnerability_scan_report", "penetration_test_report"],
+    "BCP_01": ["bcp_plan_document"],
+    "BCP_02": ["dr_plan_document"],
+    "BCP_04": ["bcp_dr_test_report"],
+    "COMP_01": ["compliance_certificates"],
+    "COMP_03": ["audit_reports"],
+    "OPS_01": ["security_policy_documents"],
+    "SUB_02": ["sub_processor_inventory"]
+  },
+
+  "risk_thresholds": {
+    "low": 25,
+    "medium": 55
+  }
+}
