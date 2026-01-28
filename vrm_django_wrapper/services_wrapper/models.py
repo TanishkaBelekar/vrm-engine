@@ -1,5 +1,5 @@
 from django.db import models
-from services_wrapper.scoring_client import get_risk_score
+from services_wrapper.scoring_client import score
 
 class Review(models.Model):
     STATUS_CHOICES = [
@@ -24,7 +24,7 @@ class Review(models.Model):
             "sections": self.sections,
         }
         try:
-            result = get_risk_score(payload)
+            result = score(payload)
             self.scoring_result = result
             self.save()
         except Exception as e:

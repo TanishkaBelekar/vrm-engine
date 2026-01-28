@@ -1,49 +1,78 @@
----
+# VRM Django Scoring Wrapper
 
-### **`vrm_django_wrapper/README.md`**
+This Django project acts as an integration layer (wrapper) for the **FastAPI-based VRM Scoring Engine**.
 
-```markdown
-# VRM Django Wrapper Service
-
-This folder contains the Django wrapper that integrates with the VRM Scoring Engine.
+It enables your Django app to communicate with the standalone scoring service to calculate and validate risk scores during key VRM workflow events.
 
 ---
 
-## Overview
+##  Tech Stack
 
-The Django wrapper:
-
-- Calls the Scoring Engine service APIs via `scoring_client.py`
-- Exposes endpoints to fetch rules, submit scoring, and validate payloads
-- Handles retries and timeouts for reliable communication (if implemented)
+- Python 3.11  
+- Django  
+- Django REST Framework  
+- Requests (for HTTP communication with the scoring service)
 
 ---
 
-## Setup Instructions
+## 🔌 Ports Used
 
-1. Create and activate a virtual environment:
+- **Django app runs on:** `http://127.0.0.1:8000`  
+- **FastAPI scoring service runs on:** `http://127.0.0.1:8001`
+
+---
+
+##  Setup Instructions
+
+### 1️ Create and activate a Python virtual environment (recommended)
 
 ```bash
+# Windows
 python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+venv\Scripts\activate
 
-2. Install dependencies
+# macOS / Linux
+python3 -m venv venv
+source venv/bin/activate
+```
 
+### 2 Install dependencies
 ```bash
 pip install -r requirements.txt
+```
 
+### 3 Run database migrations
+```bash
+python manage.py migrate
+```
 
-3. Run the Django server
+### 4 Start Django development server
 ```bash
 python manage.py runserver
+```
 
-Access the wrapper at: http://127.0.0.1:8000
+
+### How integration works
+
+The scoring engine service lives separately as a FastAPI app.
+
+The Django wrapper calls it via HTTP using the helper functions defined in:
+```bash
+services_wrapper/scoring_client.py
+```
+This client handles requests to:
+
+/score endpoint — to calculate risk scores
+
+/validate endpoint — to validate assessments
+
+/rules endpoint — to fetch scoring rules
 
 
-## Usage
--The wrapper calls the scoring engine running at http://127.0.0.1:8001
--Available view: 
-   -The wrapper calls the scoring engine running at http://127.0.0.1:8001
-   -/scoring/score – Submit payload for scoring
-   -/scoring/validate – Submit payload for validation
 
+### When Is Scoring Called?
+The scoring service is triggered at key business events such as: <br>
+   -Vendor submitting an assessment <br>
+   -Reviewer approving the assessment <br>
+   -Closing remediation <br>
+This ensures risk scores are accurate and up-to-date throughout the VRM lifecycle.
