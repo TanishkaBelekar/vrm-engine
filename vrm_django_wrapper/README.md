@@ -62,11 +62,9 @@ services_wrapper/scoring_client.py
 ```
 This client handles requests to:
 
-/score endpoint — to calculate risk scores
-
-/validate endpoint — to validate assessments
-
-/rules endpoint — to fetch scoring rules
+/v1/score — to calculate risk scores  
+/v1/validate — to validate assessments  
+/v1/rules — to fetch scoring rules
 
 
 

@@ -1,86 +1,176 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, List, Any
+
 from scoring_engine.engine import calculate_risk
 from scoring_engine.config_loader import load_config
 
-app = FastAPI(title="Risk Scoring Engine API")
+app = FastAPI(
+    title="Risk Scoring Engine API",
+    version="v1"
+)
 
-# Load config once
+# Load config once (config lock)
 config = load_config()
+CONFIG_VERSION = config.get("version", "v1")
+
+
+# -------------------------
+# Pydantic Models
+# -------------------------
 
 class SectionScore(BaseModel):
     raw_score: float
     weighted_score: float
 
+
 class ScoreRequest(BaseModel):
-    template_id: Optional[str]
-    version: Optional[str]
+    template_id: Optional[str] = None
+    version: Optional[str] = None
     sections: List[Dict[str, Any]]
-    section_weights: Optional[Dict[str, int]] = None 
+    section_weights: Optional[Dict[str, int]] = None
+
 
 class ScoreResponse(BaseModel):
     final_score: float
     risk_tier: str
-    red_flags_triggered: List[str]
+    red_flags_triggered: List[Any]
     missing_evidence: List[str]
-    section_breakdown: Dict[str, SectionScore] 
+    section_breakdown: Dict[str, SectionScore]
     explainability_notes: List[str]
 
-@app.post("/score", response_model=ScoreResponse)
+
+# -------------------------
+# Helper: Strict Validation
+# -------------------------
+
+def validate_contract(request: ScoreRequest):
+    # Enforce API version
+    if request.version and request.version != CONFIG_VERSION:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Unsupported scoring version: {request.version}"
+        )
+
+    if not request.sections or not isinstance(request.sections, list):
+        raise HTTPException(
+            status_code=400,
+            detail="Payload must contain a non-empty 'sections' list"
+        )
+
+    for section in request.sections:
+        if "name" not in section or "questions" not in section:
+            raise HTTPException(
+                status_code=400,
+                detail="Each section must contain 'name' and 'questions'"
+            )
+
+        if not isinstance(section["questions"], list):
+            raise HTTPException(
+                status_code=400,
+                detail="Section 'questions' must be a list"
+            )
+
+        for q in section["questions"]:
+            if "id" not in q:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Each question must contain 'id'"
+                )
+
+            if q.get("mandatory") and not q.get("answer"):
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Mandatory question not answered: {q['id']}"
+                )
+
+
+# -------------------------
+# v1 APIs
+# -------------------------
+
+@app.post("/v1/score", response_model=ScoreResponse)
 async def score(request: ScoreRequest):
+    """
+    Calculate risk score for an assessment.
+    Contract version: v1 (frozen)
+    """
     try:
+        validate_contract(request)
+
         payload = {
             "template_id": request.template_id,
-            "version": request.version,
+            "version": CONFIG_VERSION,
             "sections": request.sections,
         }
 
         weights = request.section_weights or config.get("section_weights")
 
-        result = calculate_risk(payload, section_weights=weights)
+        result = calculate_risk(
+            assessment_payload=payload,
+            section_weights=weights
+        )
 
-        
+        # Convert section breakdown to Pydantic model
         result["section_breakdown"] = {
             section: SectionScore(**scores)
             for section, scores in result.get("section_breakdown", {}).items()
         }
+
         return result
+
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(
+            status_code=400,
+            detail=f"Scoring failed: {str(e)}"
+        )
 
-@app.post("/validate")
+
+@app.post("/v1/validate")
 async def validate(request: ScoreRequest):
-    missing_evidence = []
-    errors = []
+    """
+    Validate payload without scoring.
+    Contract version: v1 (frozen)
+    """
+    try:
+        validate_contract(request)
 
-    sections = request.sections
+        missing_evidence = []
+        errors = []
 
-    for section in sections:
-        questions = section.get("questions", [])
-        for q in questions:
-            qid = q.get("id")
-            answer = q.get("answer")
-            requires_evidence = q.get("requires_evidence", False)
-            mandatory = q.get("mandatory", False)
+        for section in request.sections:
+            for q in section.get("questions", []):
+                qid = q.get("id")
 
-            if mandatory and (answer is None or answer == ""):
-                errors.append(f"Mandatory question {qid} is not answered.")
+                if q.get("mandatory") and not q.get("answer"):
+                    errors.append(f"Mandatory question {qid} is not answered")
 
-            if requires_evidence and not q.get("evidence_uploaded", False):
-                missing_evidence.append(qid)
+                if q.get("requires_evidence") and not q.get("evidence_uploaded", False):
+                    missing_evidence.append(qid)
 
-    valid = (len(errors) == 0 and len(missing_evidence) == 0)
+        return {
+            "valid": len(errors) == 0 and len(missing_evidence) == 0,
+            "missing_evidence": missing_evidence,
+            "errors": errors
+        }
 
-    return {
-        "valid": valid,
-        "missing_evidence": missing_evidence,
-        "errors": errors
-    }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Validation failed: {str(e)}"
+        )
 
-@app.get("/rules")
+
+@app.get("/v1/rules")
 async def get_rules():
+    """
+    Return the exact scoring configuration used at runtime.
+    """
     return {
-        "section_weights": config.get("section_weights", {}),
-        "red_flag_rules": config.get("red_flag_rules", {})
+        "version": CONFIG_VERSION,
+        "rules": config
     }

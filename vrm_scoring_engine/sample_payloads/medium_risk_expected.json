@@ -1,0 +1,50 @@
+{
+  "final_score": 29.52,
+  "risk_tier": "Medium",
+  "red_flags_triggered": [],
+  "missing_evidence": [],
+  "section_breakdown": {
+    "Access Control": {
+      "raw_score": 6.0,
+      "weighted_score": 6.67
+    },
+    "Data Protection": {
+      "raw_score": 5.0,
+      "weighted_score": 4.69
+    },
+    "Incident Response": {
+      "raw_score": 2.0,
+      "weighted_score": 1.67
+    },
+    "Vulnerability Management": {
+      "raw_score": 2.0,
+      "weighted_score": 1.67
+    },
+    "BCP/DR": {
+      "raw_score": 4.0,
+      "weighted_score": 3.33
+    },
+    "Compliance": {
+      "raw_score": 3.0,
+      "weighted_score": 3.0
+    },
+    "Operations": {
+      "raw_score": 3.0,
+      "weighted_score": 4.5
+    },
+    "Sub-processors": {
+      "raw_score": 4.0,
+      "weighted_score": 4.0
+    }
+  },
+  "explainability_notes": [
+    "Section 'Access Control' contributed 6.67 risk points.",
+    "Section 'Data Protection' contributed 4.69 risk points.",
+    "Section 'Incident Response' contributed 1.67 risk points.",
+    "Section 'Vulnerability Management' contributed 1.67 risk points.",
+    "Section 'BCP/DR' contributed 3.33 risk points.",
+    "Section 'Compliance' contributed 3.0 risk points.",
+    "Section 'Operations' contributed 4.5 risk points.",
+    "Section 'Sub-processors' contributed 4.0 risk points."
+  ]
+}

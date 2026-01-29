@@ -1,6 +1,6 @@
 {
   "template_id": "low_risk_template",
-  "version": "1.0",
+  "version": "v1",
   "sections": [
     {
       "name": "Access Control",

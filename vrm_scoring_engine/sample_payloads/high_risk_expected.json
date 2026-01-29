@@ -1,0 +1,100 @@
+{
+  "final_score": 77.49,
+  "risk_tier": "High",
+  "red_flags_triggered": [
+    "IR_06",
+    "DP_07",
+    "VM_01",
+    "COMP_05",
+    "SUB_05",
+    "AC_02",
+    "IR_01",
+    "VM_02",
+    "AC_03"
+  ],
+  "missing_evidence": [
+    "AC_02",
+    "AC_04",
+    "DP_06",
+    "IR_01",
+    "IR_04",
+    "IR_06",
+    "VM_03",
+    "VM_05",
+    "BCP_01",
+    "BCP_02",
+    "BCP_04",
+    "COMP_01",
+    "COMP_03",
+    "OPS_01",
+    "SUB_02"
+  ],
+  "section_breakdown": {
+    "Access Control": {
+      "raw_score": 16.0,
+      "weighted_score": 17.78
+    },
+    "Data Protection": {
+      "raw_score": 10.0,
+      "weighted_score": 9.38
+    },
+    "Incident Response": {
+      "raw_score": 8.0,
+      "weighted_score": 6.67
+    },
+    "Vulnerability Management": {
+      "raw_score": 10.0,
+      "weighted_score": 8.33
+    },
+    "BCP/DR": {
+      "raw_score": 10.0,
+      "weighted_score": 8.33
+    },
+    "Compliance": {
+      "raw_score": 6.0,
+      "weighted_score": 6.0
+    },
+    "Operations": {
+      "raw_score": 10.0,
+      "weighted_score": 15.0
+    },
+    "Sub-processors": {
+      "raw_score": 6.0,
+      "weighted_score": 6.0
+    }
+  },
+  "explainability_notes": [
+    "Section 'Access Control' contributed 17.78 risk points.",
+    "Section 'Data Protection' contributed 9.38 risk points.",
+    "Section 'Incident Response' contributed 6.67 risk points.",
+    "Section 'Vulnerability Management' contributed 8.33 risk points.",
+    "Section 'BCP/DR' contributed 8.33 risk points.",
+    "Section 'Compliance' contributed 6.0 risk points.",
+    "Section 'Operations' contributed 15.0 risk points.",
+    "Section 'Sub-processors' contributed 6.0 risk points.",
+    "Red flag triggered by question IR_06.",
+    "Red flag triggered by question DP_07.",
+    "Red flag triggered by question VM_01.",
+    "Red flag triggered by question COMP_05.",
+    "Red flag triggered by question SUB_05.",
+    "Red flag triggered by question AC_02.",
+    "Red flag triggered by question IR_01.",
+    "Red flag triggered by question VM_02.",
+    "Red flag triggered by question AC_03.",
+    "Evidence missing for question AC_02.",
+    "Evidence missing for question AC_04.",
+    "Evidence missing for question DP_06.",
+    "Evidence missing for question IR_01.",
+    "Evidence missing for question IR_04.",
+    "Evidence missing for question IR_06.",
+    "Evidence missing for question VM_03.",
+    "Evidence missing for question VM_05.",
+    "Evidence missing for question BCP_01.",
+    "Evidence missing for question BCP_02.",
+    "Evidence missing for question BCP_04.",
+    "Evidence missing for question COMP_01.",
+    "Evidence missing for question COMP_03.",
+    "Evidence missing for question OPS_01.",
+    "Evidence missing for question SUB_02."
+  ]
+}

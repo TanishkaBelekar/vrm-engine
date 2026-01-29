@@ -30,9 +30,9 @@ Reason:
 
 | Method | Endpoint   | Description |
 |------|-----------|-------------|
-| POST | `/score`   | Calculate final risk score |
-| POST | `/validate`| Validate payload & mandatory evidence |
-| GET  | `/rules`   | Fetch scoring rules & weights |
+| POST | `/v1/score`   | Calculate final risk score |
+| POST | `/v1/validate`| Validate payload & mandatory evidence |
+| GET  | `/v1/rules`   | Fetch scoring rules & weights |
 
 ---
 
@@ -66,7 +66,7 @@ docker run -p 8001:8001 vrm_scoring_engine
 ## CURL Examples
 1. Score Vendor Assessment
 ```bash
-curl -X POST http://127.0.0.1:8001/score -H "Content-Type: application/json" -d @sample_payloads/high_risk.json
+curl -X POST http://127.0.0.1:8001/v1/score -H "Content-Type: application/json" -d @sample_payloads/high_risk.json
 
 Sample Response
 {
@@ -83,7 +83,7 @@ Sample Response
 
 
 2. Validate Payload
-curl -X POST http://127.0.0.1:8001/validate -H "Content-Type: application/json" -d @sample_payloads/high_risk.json
+curl -X POST http://127.0.0.1:8001/v1/validate -H "Content-Type: application/json" -d @sample_payloads/high_risk.json
 
 Sample Response
 {
@@ -109,7 +109,7 @@ Sample Response
 }
 
 3. Fetching Scoring Rules
-curl http://127.0.0.1:8001/rules
+curl http://127.0.0.1:8001/v1/rules
 
 Sample Response 
 {
@@ -143,7 +143,7 @@ Sample Response
 ```bash
 {
   "template_id": "low_risk_template",
-  "version": "1.0",
+  "version": "v1",
   "sections": [
     {
       "name": "Access Control",
@@ -243,7 +243,7 @@ Sample Response
 ```bash
 {
   "template_id": "medium_risk_template",
-  "version": "1.0",
+  "version": "v1",
   "sections": [
     {
       "name": "Access Control",
@@ -343,7 +343,7 @@ Sample Response
 ```bash
 {
   "template_id": "high_risk_template",
-  "version": "1.0",
+  "version": "v1",
   
     "sections": [
       {
@@ -441,3 +441,20 @@ Sample Response
 }
 ```
 
+
+---
+
+## Failure Handling & Timeouts (Django Integration Guidance)
+
+If the scoring service is unavailable or times out:
+
+- Django should call the scoring service with a **2-second timeout**
+- Retry **once** if a timeout or 5xx error occurs
+- If retry fails:
+  - Block assessment submission
+  - Return a safe error to UI:  
+    `"Scoring service temporarily unavailable. Please try again later."`
+- No partial or cached score should be used
+- Assessment state should remain unchanged
+
+This ensures scoring consistency and avoids incorrect risk decisions.
