@@ -69,8 +69,28 @@ This client handles requests to:
 
 
 ### When Is Scoring Called?
-The scoring service is triggered at key business events such as: <br>
-   -Vendor submitting an assessment <br>
-   -Reviewer approving the assessment <br>
-   -Closing remediation <br>
-This ensures risk scores are accurate and up-to-date throughout the VRM lifecycle.
+
+Scoring is triggered by the Django backend at the following points:
+
+- Reviewer approves an assessment
+- After remediation is closed and approved (if remediation was required)
+
+Scoring is NOT triggered on draft saves.
+
+
+
+## Scoring Persistence (Django)
+
+The scoring service returns:
+- final_score
+- risk_tier
+- red_flags_triggered
+- section_breakdown
+- explainability_notes
+
+Django is expected to persist these fields per vendor review
+along with:
+- scored_at
+- template_version
+
+

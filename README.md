@@ -71,4 +71,14 @@ VRM_ENGINE
 - **Scoring Engine**: Computes risk score, tiers, red flags, explainability
 - **Django Wrapper**: Calls scoring service at defined workflow points
 - **Rules**: Loaded from JSON (DB-ready in future)
+- **Scoring Trigger Ownership**:
+  Scoring is triggered by the Django backend on:
+  - Reviewer approval
+  - Remediation closure approval (if applicable)
 
+## API Contract Versioning
+
+The scoring service follows a **versioned API contract (v1)**.
+
+All endpoints exposed under `/v1/*` are considered **stable**.
+Breaking changes will only be introduced via a new version (v2).

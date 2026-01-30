@@ -164,13 +164,15 @@ async def validate(request: ScoreRequest):
             detail=f"Validation failed: {str(e)}"
         )
 
-
 @app.get("/v1/rules")
-async def get_rules():
-    """
-    Return the exact scoring configuration used at runtime.
-    """
+def get_rules():
+    rules = load_config()
+
     return {
-        "version": CONFIG_VERSION,
-        "rules": config
+        "rules": rules
     }
+
+
+
+
+

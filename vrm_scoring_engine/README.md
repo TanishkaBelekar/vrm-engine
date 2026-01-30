@@ -46,6 +46,15 @@ Reason:
 
 ---
 
+
+## Rules Configuration
+
+Scoring rules (weights, red flags, mandatory evidence) are loaded from a single JSON config file.
+This allows future migration to database-backed rules without API changes.
+
+
+
+
 ## Running the Service (Local – without Docker)
 
 ```bash
@@ -458,3 +467,25 @@ If the scoring service is unavailable or times out:
 - Assessment state should remain unchanged
 
 This ensures scoring consistency and avoids incorrect risk decisions.
+
+
+
+## Schema Validation & Error Handling
+
+The scoring service performs strict input validation before scoring.
+
+If the request payload is invalid, the service returns a clear and structured error response.
+No partial or cached score is ever returned.
+
+### Example Validation Error Response
+
+```json
+{
+  "error": "Invalid scoring payload",
+  "details": [
+    "Missing mandatory question: AC_02",
+    "Evidence required for question IR_01 but not provided",
+    "Invalid answer value for VM_03 (allowed: Yes / No / Partial)"
+  ]
+}
+
