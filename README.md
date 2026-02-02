@@ -37,6 +37,7 @@ Django communicates with the scoring service over HTTP using a thin wrapper.
 ---
 
 ## Repository Structure
+```
 
 VRM_ENGINE
 ├── vrm_scoring_engine # Scoring Service (FastAPI)
@@ -64,7 +65,7 @@ VRM_ENGINE
     ├── db.sqlite3
     └── manage.py
 
-
+```
 
 ## Responsibilities
 
