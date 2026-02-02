@@ -33,6 +33,7 @@ Reason:
 | POST | `/v1/score`   | Calculate final risk score |
 | POST | `/v1/validate`| Validate payload & mandatory evidence |
 | GET  | `/v1/rules`   | Fetch scoring rules & weights |
+| GET  | `/health`     | Service liveness check
 
 ---
 
@@ -477,7 +478,7 @@ The scoring service performs strict input validation before scoring.
 If the request payload is invalid, the service returns a clear and structured error response.
 No partial or cached score is ever returned.
 
-### Example Validation Error Response
+## Example Validation Error Response
 
 ```json
 {
@@ -488,4 +489,77 @@ No partial or cached score is ever returned.
     "Invalid answer value for VM_03 (allowed: Yes / No / Partial)"
   ]
 }
+```
 
+## Scoring Payload Contract
+```json
+{
+  "template_id": "string",
+  "version": "v1",
+  "sections": [
+    {
+      "name": "Access Control",
+      "questions": [
+        {
+          "id": "AC_02",
+          "answer": "Yes | No | Partial | text",
+          "mandatory": true,
+          "requires_evidence": true,
+          "evidence_uploaded": true,
+          "type": "choice | text | multiple_choice"
+        }
+      ]
+    }
+  ]
+}
+```
+
+
+## Scoring Result Contract (Persisted by Django)
+```json
+{
+  "final_score": 77.49,
+  "risk_tier": "High",
+  "red_flags_triggered": ["AC_02", "IR_01"],
+  "missing_evidence": ["DP_06"],
+  "section_breakdown": {
+    "Access Control": {
+      "raw_score": 20,
+      "weighted_score": 17.78
+    }
+  },
+  "explainability_notes": [
+    "Access Control contributed 17.78 risk points due to missing MFA."
+  ],
+  "scored_at": "2026-02-02T10:15:30Z",
+  "template_version": "v1"
+}
+```
+
+
+## Running the Scoring Service (Docker)
+
+### Environment Variables
+- `SCORING_CONFIG_PATH=config.json`  
+  Path to the scoring rules configuration file.
+- `SCORING_TIMEOUT_SECONDS=5`  
+  Timeout in seconds for scoring requests.
+
+### Run
+docker build -t vrm-scoring-engine .
+docker run -p 8001:8001 vrm-scoring-engine
+
+### Health Check
+GET /health 
+
+### Timeout / Retry Guidance
+- Client timeout: 3–5 seconds
+- Retry: max 2 retries on network failure
+- Do NOT retry on HTTP 400 (payload errors)
+
+
+## Scoring Trigger Rules:
+- Initial score is generated only after reviewer approval.
+- If remediation exists:
+  - Re-score only after remediation approval.
+  

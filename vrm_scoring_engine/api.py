@@ -174,5 +174,15 @@ def get_rules():
 
 
 
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "service": "vrm-scoring-engine",
+        "version": CONFIG_VERSION
+    }
+
+
+
 
 
