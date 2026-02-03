@@ -37,22 +37,12 @@ Reason:
 
 ---
 
-## Scoring Output Includes
-- `final_score`
-- `risk_tier`
-- `red_flags_triggered`
-- `missing_evidence`
-- `section_breakdown` (weighted)
-- `explainability_notes` (human-readable)
-
----
-
 
 ## Rules Configuration
 
-Scoring rules (weights, red flags, mandatory evidence) are loaded from a single JSON config file.
+Scoring rules (weights, red flags, mandatory evidence) are loaded from a single JSON config file.  
+By default, rules are loaded from `config.json`, configurable via `SCORING_CONFIG_PATH`.  
 This allows future migration to database-backed rules without API changes.
-
 
 
 
@@ -452,8 +442,6 @@ Sample Response
 ```
 
 
----
-
 ## Failure Handling & Timeouts (Django Integration Guidance)
 
 If the scoring service is unavailable or times out:
@@ -515,26 +503,38 @@ No partial or cached score is ever returned.
 ```
 
 
-## Scoring Result Contract (Persisted by Django)
-```json
-{
-  "final_score": 77.49,
-  "risk_tier": "High",
-  "red_flags_triggered": ["AC_02", "IR_01"],
-  "missing_evidence": ["DP_06"],
-  "section_breakdown": {
-    "Access Control": {
-      "raw_score": 20,
-      "weighted_score": 17.78
-    }
-  },
-  "explainability_notes": [
-    "Access Control contributed 17.78 risk points due to missing MFA."
-  ],
-  "scored_at": "2026-02-02T10:15:30Z",
-  "template_version": "v1"
-}
-```
+## Scoring Payload Contract (from Django)
+
+Django must send the following payload to the scoring service:
+
+- template_id (string)
+- version (string)
+- sections[]:
+  - name
+  - questions[]:
+    - id
+    - answer
+    - mandatory
+    - requires_evidence
+    - type
+    - evidence_uploaded
+
+
+
+## Scoring Response Structure
+
+The scoring service returns:
+
+- final_score
+- risk_tier
+- red_flags_triggered
+- section_breakdown
+- explainability_notes
+- scored_at
+- template_version
+
+scored_at and template_version are included for auditability and traceability and are persisted by Django.
+
 
 
 ## Running the Scoring Service (Docker)
@@ -563,3 +563,20 @@ GET /health
 - If remediation exists:
   - Re-score only after remediation approval.
   
+## Integration Test Notes (Post-wiring)
+
+After the scoring service is wired into the main Django backend, verify the following using Swagger or Postman:
+
+1. Reviewer Approval → Scoring Trigger
+   - Approving a review calls the scoring service exactly once
+   - Response contains `final_score`, `risk_tier`, `section_breakdown`, and `explainability_notes`
+   - Scoring output is persisted in the review details (`scoring_result`)
+
+2. Remediation Flow (if applicable)
+   - If remediation is required, approval does NOT trigger scoring
+   - After remediation approval, scoring is re-triggered
+   - Updated scoring result replaces the previous score
+
+Expected Errors:
+- Invalid payload → HTTP 400 from scoring service, approval blocked
+- Scoring service unavailable → approval blocked with safe error message

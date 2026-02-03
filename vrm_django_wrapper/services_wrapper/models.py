@@ -1,27 +1,58 @@
 from django.db import models, transaction
 from services_wrapper.scoring_client import score
 
+
 class Review(models.Model):
+    """
+    Review model represents the reviewer stage of an assessment.
+
+    Scoring is triggered:
+    - On reviewer approval
+    - Re-triggered only after remediation approval (if remediation exists)
+    """
+
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected'),
     ]
 
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='Pending'
+    )
+
     template_id = models.CharField(max_length=100)
     version = models.CharField(max_length=20)
-    sections = models.JSONField()  # This holds the full sections list with questions and answers, matching the sample payload
-    scoring_result = models.JSONField(null=True, blank=True)  # Stores scoring output
+
+    # Full assessment payload sections (questions + answers),
+    # sent as-is to the scoring service
+    sections = models.JSONField()
+
+    # Stores scoring service response:
+    # {
+    #   final_score,
+    #   risk_tier,
+    #   red_flags_triggered,
+    #   section_breakdown,
+    #   explainability_notes,
+    #   scored_at,
+    #   template_version
+    # }
+    scoring_result = models.JSONField(null=True, blank=True)
 
     def approve_review(self):
         """
-        Called when reviewer approves.
-        Sends full payload for scoring and approves only if no remediation pending.
+        Reviewer approval workflow.
+
+        - Called when reviewer clicks "Approve"
+        - Triggers scoring ONLY if no remediation is pending
+        - Approval is completed only if scoring succeeds
         """
         if self.remediation_pending():
-            # If remediation exists and is pending approval, skip approval/scoring here
-            print("Remediation pending. Approval delayed.")
+            # Remediation exists and is not yet approved
+            # Scoring and approval must wait
             return
 
         payload = {
@@ -30,7 +61,8 @@ class Review(models.Model):
             "sections": self.sections,
         }
 
-        result = score(payload)  # Will raise exception if scoring fails
+        # Safe-fail: if scoring fails, approval must not proceed
+        result = score(payload)
 
         with transaction.atomic():
             self.status = 'Approved'
@@ -39,8 +71,11 @@ class Review(models.Model):
 
     def approve_remediation(self):
         """
-        Called when remediation is approved.
-        Triggers re-scoring and saves the updated scoring result.
+        Remediation approval workflow.
+
+        - Called after remediation is approved
+        - Triggers re-scoring
+        - Updates scoring result but does not change review status
         """
         payload = {
             "template_id": self.template_id,
@@ -48,7 +83,7 @@ class Review(models.Model):
             "sections": self.sections,
         }
 
-        result = score(payload)  # Will raise exception if scoring fails
+        result = score(payload)
 
         with transaction.atomic():
             self.scoring_result = result
@@ -56,8 +91,13 @@ class Review(models.Model):
 
     def remediation_pending(self):
         """
-        Placeholder method.
-        Returns False now since remediation integration not done.
-        Update later to check remediation status from backend or DB.
+        Placeholder for remediation check.
+
+        Currently returns False because remediation
+        is handled by another backend module.
+
+        This will later check:
+        - remediation exists AND
+        - remediation status != approved
         """
         return False

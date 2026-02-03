@@ -45,7 +45,7 @@ VRM_ENGINE
 │   ├── sample_payloads/ #Sample payloads for low, medium and high risk
 │   ├── scoring_engine/ #Core scoring logic and rules loader
 │   ├── tests/
-│   ├── api.py  #FastAPI app with /score, /validate, /rules endpoints
+│   ├── api.py  #FastAPI app with /v1/score, /v1/validate, /v1/rules endpoints
 │   ├── README.md
 │   └── requirements.txt
 └── vrm_django_wrapper #Django project wrapper
