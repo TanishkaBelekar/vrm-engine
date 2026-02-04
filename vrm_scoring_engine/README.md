@@ -580,3 +580,53 @@ After the scoring service is wired into the main Django backend, verify the foll
 Expected Errors:
 - Invalid payload → HTTP 400 from scoring service, approval blocked
 - Scoring service unavailable → approval blocked with safe error message
+
+
+Audit log creation and database persistence are handled by the canonical Django backend. The scoring service is stateless and does not write to the database.
+
+## Integration Verification Checklist (Canonical Backend)
+
+This checklist is to be used after the scoring service is wired into the canonical Django backend to verify correct end-to-end behavior using Swagger or Postman.
+
+### 1. Scoring Trigger Verification
+- Scoring is triggered only on reviewer final review approval.
+- If remediation exists, re-scoring is triggered only after remediation approval.
+- Scoring is NOT triggered on assessment submission, draft save, or reviewer comments.
+
+### 2. Service Call Verification
+- Endpoint called by Django: `POST /v1/score`
+- Scoring service is called exactly once per trigger.
+- Client timeout ≤ 3 seconds.
+- Retry once on timeout or 5xx error.
+- No retry on HTTP 400 (payload validation failure).
+
+### 3. Response Payload Verification
+The scoring service response contains:
+- `final_score`
+- `risk_tier`
+- `red_flags_triggered`
+- `section_breakdown`
+- `explainability_notes`
+- `scored_at`
+- `template_version`
+
+### 4. Database Persistence Verification (Django)
+After successful scoring:
+- Scoring output is persisted against the assessment/review record:
+  - `final_score`
+  - `risk_tier`
+  - `red_flags`
+  - `section_breakdown`
+  - `explainability_notes`
+  - `scored_at`
+  - `template_version`
+- On remediation re-approval, the previous scoring result is replaced with the latest score.
+
+### 5. Audit Event Verification
+- On successful scoring, an audit event (e.g., `ASSESSMENT_SCORED`) is recorded.
+- On remediation re-scoring, an audit event (e.g., `ASSESSMENT_RE_SCORED`) is recorded.
+- Audit event includes: assessment_id, template_version, risk_tier, scored_at.
+
+### 6. Failure Handling Verification
+- Invalid payload → scoring service returns HTTP 400 and approval is blocked.
+- Scoring service unavailable or timeout → approval is blocked, assessment state remains unchanged, and a safe error message is returned to the UI.
