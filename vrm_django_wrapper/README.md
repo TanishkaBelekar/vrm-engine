@@ -94,3 +94,49 @@ along with:
 - template_version
 
 
+
+
+## Canonical Backend Wiring & Verification (Scoring Integration)
+
+This Django wrapper serves as a **reference integration layer** for the FastAPI-based VRM Scoring Engine.  
+The actual workflow wiring and event triggering is implemented in the **canonical backend**.
+
+### Scoring Trigger Rules
+
+The canonical backend must trigger scoring **only** at the following workflow stages:
+
+- **Final reviewer approval** of a vendor assessment
+- **Remediation approval**, if remediation was required
+
+Scoring must **not** be triggered on:
+- Draft save
+- Initial submission
+- Reviewer comments or intermediate state transitions
+
+### Scoring Service Invocation
+
+The canonical backend should invoke the scoring service using:
+
+```http
+POST /v1/score
+```
+
+### Verification Steps (Postman / Swagger)
+
+After integration, verify scoring using the following checklist:
+
+1. **Ensure scoring service is running and healthy**
+   - `GET /health` → HTTP 200
+
+2. **Trigger final review approval in the canonical backend**
+   - Confirm `POST /v1/score` is called once
+   - Verify scoring response is persisted
+
+3. **Trigger remediation approval (if applicable)**
+   - Confirm scoring is re-executed
+   - Verify updated score persistence
+
+4. **Confirm scoring is NOT triggered on**
+   - Draft save
+   - Initial submission
+   - Reviewer comments

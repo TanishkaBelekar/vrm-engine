@@ -630,3 +630,25 @@ After successful scoring:
 ### 6. Failure Handling Verification
 - Invalid payload → scoring service returns HTTP 400 and approval is blocked.
 - Scoring service unavailable or timeout → approval is blocked, assessment state remains unchanged, and a safe error message is returned to the UI.
+
+
+
+## Docker Compose Integration (Canonical Backend)
+# Scoring Service (FastAPI)
+scoring-service:
+  image: vrm-scoring-engine:latest
+  container_name: scoring-service
+  ports:
+    - "8001:8001"
+  environment:
+    SCORING_CONFIG_PATH=/app/config.json
+    SCORING_TIMEOUT_SECONDS=5
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+This service block is intended to be copied into the canonical backend
+`docker-compose.yml` to enable scoring integration.
+
